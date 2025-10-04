@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>mark sheet (Red Tab)</title>
+    <!-- Load Tailwind CSS for modern styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Set font and general background color */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f4f8; /* Light blue-gray background */
+        }
+        
+        /* Custom styles to simulate Excel constraints */
+        .excel-table th, .excel-table td {
+            /* Simulate Row Height of 30px */
+            height: 30px;
+            vertical-align: middle;
+            text-align: center;
+            padding: 0 4px; /* Minimal padding */
+            border: 1px solid #d1d5db; /* Light gray border */
+        }
+
+        /* Simulate Column Width of 20 units (using Tailwind width classes) */
+        .col-roll { width: 5rem; /* ~80px */ }
+        .col-name { width: 15rem; /* ~240px */ text-align: left; padding-left: 1rem; }
+        .col-marks, .col-total, .col-percentage { width: 8rem; /* ~128px */ }
+
+        /* Conditional Formatting Colors (Fill) */
+        .highlight-red { background-color: #fecaca; } /* Red for < 35 */
+        .highlight-yellow { background-color: #fef9c3; } /* Yellow for 35-70 */
+        .highlight-green { background-color: #dcfce7; } /* Green for > 70 */
+        
+        /* Sheet background simulation (using the container color) */
+        .sheet-area {
+            background-color: white; 
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+
+        /* Sheet Tab Color Simulation */
+        .sheet-tab {
+            background-color: #dc2626; /* Red tab color */
+            color: white;
+            border-radius: 6px 6px 0 0;
+            padding: 8px 20px;
+            font-weight: 600;
+        }
+        
+    </style>
+</head>
+<body class="p-8 md:p-12">
+
+    <div class="max-w-7xl mx-auto">
+        <h1 class="text-3xl font-bold mb-6 text-gray-800">Payroll / Marks Sheet Simulation</h1>
+        
+        <!-- Sheet Tab Simulation -->
+        <div class="flex">
+            <div class="sheet-tab">mark sheet</div>
+            <div class="flex-grow bg-gray-300 h-10 border-b border-gray-400"></div>
+        </div>
+        
+        <!-- Sheet Area -->
+        <div class="sheet-area p-4 overflow-x-auto">
+            <table id="marksTable" class="excel-table w-full border-collapse">
+                <thead>
+                    <tr class="bg-gray-100 text-gray-700 font-semibold">
+                        <th class="col-roll">Roll no.</th>
+                        <th class="col-name">Name</th>
+                        <th class="col-marks">Sci</th>
+                        <th class="col-marks">Eng</th>
+                        <th class="col-marks">Maths</th>
+                        <th class="col-total">Total</th>
+                        <th class="col-percentage">Percentage</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Data will be populated here by JavaScript -->
+                </tbody>
+            </table>
+        </div>
+
+        <div class="mt-8 p-4 bg-yellow-50 border-l-4 border-yellow-400 text-sm text-yellow-800 rounded">
+            <p class="font-bold">Assignment Checklist Applied:</p>
+            <ul class="list-disc list-inside mt-2 space-y-1">
+                <li><span class="font-mono text-red-500">Red:</span> Marks &lt; 35</li>
+                <li><span class="font-mono text-yellow-500">Yellow:</span> Marks 35 - 70</li>
+                <li><span class="font-mono text-green-500">Green:</span> Marks &gt; 70</li>
+                <li>Total and Percentage calculated using formula .</li>
+                <li>Sheet name ("mark sheet") and Tab color (Red) simulated.</li>
+                <li>Row height (30) and column width (20) </li>
+                <li>Suitable table formatting applied .</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        const students = [
+            { roll: 1, name: "Dhara", sci: 95, eng: 98, maths: 58 },
+            { roll: 2, name: "Madhvi", sci: 47, eng: 58, maths: 77 },
+            { roll: 3, name: "Pritesh", sci: 89, eng: 78, maths: 65 },
+            { roll: 4, name: "Rochani", sci: 45, eng: 53, maths: 86 },
+            { roll: 5, name: "Nilosh", sci: 56, eng: 67, maths: 45 },
+            { roll: 6, name: "Bhargav", sci: 58, eng: 78, maths: 65 },
+            { roll: 7, name: "Pretsh", sci: 88, eng: 87, maths: 96 },
+            { roll: 8, name: "Vijay", sci: 77, eng: 53, maths: 67 },
+        ];
+
+        // Subject columns for conditional formatting
+        const subjectKeys = ['sci', 'eng', 'maths'];
+
+        /**
+         * Calculates Total and Percentage for a student.
+         * @param {object} student - Student data object.
+         * @returns {object} - Student object with calculated total and percentage.
+         */
+        function calculateMarks(student) {
+            const total = student.sci + student.eng + student.maths;
+            const percentage = (total / 300) * 100;
+            return {
+                ...student,
+                total: total,
+                percentage: parseFloat(percentage.toFixed(2)) // Round to 2 decimal places
+            };
+        }
+
+        /**
+         * Gets the CSS class for conditional formatting based on the mark.
+         * @param {number} mark - The subject mark.
+         * @returns {string} - The corresponding highlight class.
+         */
+        function getHighlightClass(mark) {
+            if (mark < 35) {
+                return 'highlight-red';
+            } else if (mark >= 35 && mark <= 70) {
+                return 'highlight-yellow';
+            } else if (mark > 70) {
+                return 'highlight-green';
+            }
+            return '';
+        }
+
+        /**
+         * Renders the data into the HTML table.
+         */
+        function renderTable() {
+            const tableBody = document.querySelector('#marksTable tbody');
+            const processedStudents = students.map(calculateMarks);
+
+            tableBody.innerHTML = processedStudents.map(student => {
+                // Determine highlight class for each subject mark
+                const sciClass = getHighlightClass(student.sci);
+                const engClass = getHighlightClass(student.eng);
+                const mathsClass = getHighlightClass(student.maths);
+
+                return `
+                    <tr class="hover:bg-gray-50 even:bg-white odd:bg-gray-50">
+                        <td class="col-roll text-gray-600">${student.roll}</td>
+                        <td class="col-name font-medium text-gray-800">${student.name}</td>
+                        <td class="col-marks ${sciClass}">${student.sci}</td>
+                        <td class="col-marks ${engClass}">${student.eng}</td>
+                        <td class="col-marks ${mathsClass}">${student.maths}</td>
+                        <td class="col-total font-semibold">${student.total}</td>
+                        <td class="col-percentage font-semibold">${student.percentage}%</td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        // Run the rendering function when the window loads
+        window.onload = renderTable;
+
+    </script>
+</body>
+</html>
