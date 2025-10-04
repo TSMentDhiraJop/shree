@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>mark sheet (Red Tab)</title>
+    <title>shivani / mark sheet (Red Tab)</title>
     <!-- Load Tailwind CSS for modern styling -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
@@ -53,7 +53,7 @@
 <body class="p-8 md:p-12">
 
     <div class="max-w-7xl mx-auto">
-        <h1 class="text-3xl font-bold mb-6 text-gray-800">Payroll / Marks Sheet Simulation</h1>
+        <h1 class="text-3xl font-bold mb-6 text-gray-800">shivani / Marks Sheet Simulation</h1>
         
         <!-- Sheet Tab Simulation -->
         <div class="flex">
